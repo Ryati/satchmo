@@ -13,8 +13,9 @@
 <h3 id="price">{{ product.subscriptionproduct.recurring_price|currency }} </h3>
 
 {% for pic in product.productimage_set.all %}
-    {% thumbnail pic.picture 280x280 as image %}
-    <img src="{{ image }}" width="{{ image.width }}" height="{{ image.height }}" />
+    {% thumbnail pic.picture "280x280" as image %}
+    <img src="{{ image.url }}" width="{{ image.width }}" height="{{ image.height }}" />
+    {% endthumbnail %}
 {% endfor %}
  {% for trial in product.subscriptionproduct.get_trial_terms %}
     {% if forloop.first %} <p> {% blocktrans %}This product has trial subscription pricing {% endblocktrans %}</p><ul> {% endif %}

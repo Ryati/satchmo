@@ -10,8 +10,9 @@
 <p>{% autoescape off %}{{ product.translated_description }}{% endautoescape %}</p>
 {% trans "Price" %}: <h3 id="price">{{ product.unit_price|currency }}</h3>
 {% for pic in product.productimage_set.all %}
-    {% thumbnail pic.picture 280x280 as image %}
-    <img src="{{ image }}" width="{{ image.width }}" height="{{ image.height }}" />
+    {% thumbnail pic.picture "280x280" as image %}
+    <img src="{{ image.url }}" width="{{ image.width }}" height="{{ image.height }}" />
+    {% endthumbnail %}
 {% endfor %}
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
