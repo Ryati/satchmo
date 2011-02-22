@@ -164,7 +164,7 @@ class OptionGroupOptions(admin.ModelAdmin):
         list_display = ('site',)
     else:
         list_display = ()
-    list_display += ('name',)
+    list_display += ('name','description',)
 
 class OptionOptions(admin.ModelAdmin):
     inlines = []
