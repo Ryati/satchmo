@@ -1,0 +1,32 @@
+<order>
+  <merchantinfo>
+    <configfile>{{ config.merchantID }}</configfile>
+  </merchantinfo>
+  <orderoptions>
+    <ordertype>Sale</ordertype>
+  </orderoptions>
+  <transactiondetails>
+    <transactionorigin>Eci</transactionorigin>
+    <oid>{{ merchantReferenceCode }}</oid>
+  </transactiondetails>
+  <payment>
+    <chargetotal>{{ purchaseTotals.grandTotalAmount }}</chargetotal>
+  </payment>
+  <creditcard>
+    <cardnumber>{{ card.accountNumber }}</cardnumber>
+    <cardexpmonth>{{ card.expirationMonth }}</cardexpmonth>
+    <cardexpyear>{{ card.expirationYear|slice:"2:" }}</cardexpyear>
+    <cvmvalue>{{ card.cvNumber }}</cvmvalue>
+    <cvmindicator>provided</cvmindicator>
+  </creditcard>
+  <billing>
+    <name>{{ billTo.firstName }} {{billTo.lastName }}</name>
+    <address1>{{ billTo.street1 }}</address1>
+    <address2>{{ billTo.street2 }}</address2>
+    <city>{{ billTo.city }}</city>
+    <state>{{ billTo.state }}</state>
+    <zip>{{ billTo.postalCode }}</zip>
+    <phone>{{ billTo.phoneNumber }}</phone>
+    <email>{{ billTo.email }}</email>
+  </billing>
+</order>
