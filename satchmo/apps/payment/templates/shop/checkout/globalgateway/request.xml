@@ -1,3 +1,4 @@
+{% load normalize_decimal %}
 <order>
   <merchantinfo>
     <configfile>{{ config.merchantID }}</configfile>
@@ -10,8 +11,20 @@
     <oid>{{ merchantReferenceCode }}</oid>
   </transactiondetails>
   <payment>
-    <chargetotal>{{ purchaseTotals.grandTotalAmount }}</chargetotal>
+      <chargetotal>{{ purchaseTotals.grandTotalAmount }}</chargetotal>
+      <tax>{{ purchaseTotals.tax }}</tax>
+      <shipping>{{ purchaseTotals.shipping }}</shipping>
+      <subtotal>{{ purchaseTotals.sub_total }}</subtotal>
   </payment>
+  <items>{% for item in order.orderitem_set.all %}
+      <item>
+          <id>{{item.product.id}}</id>
+          <description>{{item.product.name}}</description>
+          <price>{{item.unit_price|normalize_decimal:'places=2'}}</price>
+          <quantity>{{item.quantity|normalize_decimal:'places=0'}}</quantity>
+      </item>
+      {% endfor %}
+  </items>
   <creditcard>
     <cardnumber>{{ card.accountNumber }}</cardnumber>
     <cardexpmonth>{{ card.expirationMonth }}</cardexpmonth>
@@ -28,5 +41,7 @@
     <zip>{{ billTo.postalCode }}</zip>
     <phone>{{ billTo.phoneNumber }}</phone>
     <email>{{ billTo.email }}</email>
+    {% if billTo.addrnum %}<addrnum>{{billTo.addrnum}}</addrnum>{% endif %}
+    <userid>{{ order.contact.id }}</userid>
   </billing>
 </order>

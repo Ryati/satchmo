@@ -17,6 +17,8 @@ AUTHRESPONSE = re.compile(r"<r[ _]authresponse>(?P<value>.*)</r[ _]authresponse>
 APPROVED = re.compile(r"<r[ _]approved>(?P<value>.*)</r[ _]approved>")
 AVS = re.compile(r"<r[ _]avs>(?P<value>.*)</r[ _]avs>")
 
+ADDRNUM = re.compile(r"^(?P<value>\d+)")
+
 
 GOOD_AVS = ["YYY", "YYA", "YYD", "YYF", "YYM", "NYP", "NNI", "NNC", "XXE", ]
 BAD_AVS = ["NNN", "NNC", "NNI", ]
@@ -59,11 +61,15 @@ class PaymentProcessor(BasePaymentProcessor):
         #import pdb
         #pdb.set_trace()
         self.order = order
+        addrnum = ADDRNUM.search(order.bill_street1)
+        if addrnum is not None:
+            addrnum = addrnum.group("value")
         self.bill_to = {
             'firstName' : order.contact.first_name,
             'lastName' : order.contact.last_name,
             'street1': order.bill_street1,
             'street2': order.bill_street2,
+            'addrnum': addrnum,
             'city': order.bill_city,
             'state' : order.bill_state,
             'postalCode' : order.bill_postal_code,
@@ -85,6 +91,9 @@ class PaymentProcessor(BasePaymentProcessor):
         self.purchase_totals = {
             'currency' : currency,
             'grandTotalAmount' : "%.02f"%trunc_decimal(order.balance, 2),
+            'shipping' : "%.02f"%trunc_decimal(order.shipping_sub_total,2),
+            'tax' : "%.02f"%trunc_decimal(order.tax+order.shipping_tax,2),
+            'sub_total': "%.02f"%trunc_decimal(order.discounted_sub_total,2),
         }
 
 
@@ -112,6 +121,7 @@ class PaymentProcessor(BasePaymentProcessor):
             'billTo' : self.bill_to,
             'purchaseTotals' : self.purchase_totals,
             'card' : self.card,
+            'order': self.order,
         })
 
         request = loader.render_to_string('shop/checkout/globalgateway/request.xml',{},c)
@@ -188,7 +198,7 @@ class PaymentProcessor(BasePaymentProcessor):
                 reason_code = code.group("value")
 
             if not testing:
-                payment = self.record_payment(order = self.order, amount = amount, transaction_id = transaction_id, reason_code = reason_code, details = response_message)
+                payment = self.record_payment(order = self.order, amount = amount, transaction_id = transaction_id, reason_code = reason_code)
         else:
             reason_code = ""
             if error is not None:
