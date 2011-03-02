@@ -165,33 +165,20 @@ class PaymentProcessor(BasePaymentProcessor):
             transaction_id = "ORDERNUM: %s"%ordernum.group("value")
 
         if approved is not None and approved.group('value').lower() == "approved":
-            if self.settings.AVS.value:
-                if avs is not None:
-                    avs_value = avs.group("value")[:3]
-                    cvm = avs.group("value")[-1:]
+            success = True
+        elif self.settings.AVS.value:
+            if avs is not None:
+                avs_value = avs.group("value")[:3]
+                cvm = avs.group("value")[-1:]
 
-                    if avs_value in BAD_AVS:
-                        response_message = "There is a problem with your billing address."
-                        success = False
-                    elif avs_value in GOOD_AVS:
-                        success = True
-                    elif avs_value in EITHER_AVS and self.settings.STRICT_AVS == False:
-                        success = True
-                    else:
-                        response_message = "There is a problem with your billing address."
-                        success = False
-                    if cvm in BAD_CVM:
-                        response_message = "There is a problem with your credit card information.  Please check the number, expiration date, and verification code."
-                        success = False
-                    elif cvm in GOOD_CVM:
-                        success = True
-                    elif cvm in EITHER_CVM and self.settings.STRICT_AVS == False:
-                        success = True
-                    else:
-                        response_message = "There is a problem with your credit card information.  Please check the number, expiration date, and verification code."
-                        success = False
-            else:
-                success = True
+                if avs_value in BAD_AVS:
+                    response_message = "There is a problem with your billing address."
+                elif avs_value in EITHER_AVS and self.settings.STRICT_AVS == True:                   
+                    response_message = "There is a problem with your billing address."
+                if cvm in BAD_CVM:
+                    response_message = "There is a problem with your credit card information.  Please check the number, expiration date, and verification code."
+                elif cvm in EITHER_CVM and self.settings.STRICT_AVS == True:
+                    response_message = "There is a problem with your credit card information.  Please check the number, expiration date, and verification code."
         if success:
             reason_code = ""
             if code is not None:
