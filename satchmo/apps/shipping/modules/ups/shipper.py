@@ -235,7 +235,7 @@ class Shipper(BaseShipper):
             self._calculated = False
             all_rates = tree.getiterator('RatedShipment')
             for response in all_rates:
-                if self.service_type_code == response.find('.//Service/Code/').text:
+                if self.service_type_code == response.find('.//Service/Code').text:
                     self.charges = response.find('.//TotalCharges/MonetaryValue').text
                     if response.find('.//GuaranteedDaysToDelivery').text:
                         self.delivery_days = response.find('.//GuaranteedDaysToDelivery').text
