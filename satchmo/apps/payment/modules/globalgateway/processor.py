@@ -185,12 +185,12 @@ class PaymentProcessor(BasePaymentProcessor):
                 reason_code = code.group("value")
 
             if not testing:
-                payment = self.record_payment(order = self.order, amount = amount, transaction_id = transaction_id, reason_code = reason_code)
+                payment = self.record_payment(order=self.order, amount=amount, transaction_id=transaction_id, reason_code=reason_code)
         else:
             reason_code = ""
             if error is not None:
                 reason_code = error.group("value")
-                if response_message == "DECLINED":
+                if not success:
                     error_dict = self.process_error(reason_code)
                     if error_dict['code'][:2] == "23":
                         response_message = error_dict['message']
