@@ -61,7 +61,7 @@ config_register_list(
                 help_text=("""This is the address to submit test transactions"""),
                 default='staging.linkpt.net'),
 
-    StringValue(PAYMENT_GROUP, 
+    IntegerValue(PAYMENT_GROUP, 
                 'PORT',
                 description=_("Port for live payment transactions"),
                 help_text=("""This is the port to submit live transactions"""),

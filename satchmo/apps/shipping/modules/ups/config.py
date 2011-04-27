@@ -56,6 +56,18 @@ config_register_list(
         help_text=_("The cost of packaging and getting the package off"),
         default=Decimal('0.00')),
 
+     IntegerValue(SHIPPING_GROUP,
+        'HANDLING_FEE_PERCENT',
+        description=_("Handling Fee Percentage"),
+        help_text=_("The cost of packaging and getting the package off as a percentage of total cost"),
+        default=0),
+
+     DecimalValue(SHIPPING_GROUP,
+        'FREE_SHIPPING_MIN',
+        description=_("Free Shipping after minimum purchase price"),
+        help_text=_("FREE SHIPPING! after value"),
+        default=Decimal('0.0')),
+
     StringValue(SHIPPING_GROUP,
         'SHIPPING_CONTAINER',
         description=_("Type of container used to ship product."),

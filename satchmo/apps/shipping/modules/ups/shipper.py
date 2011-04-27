@@ -88,10 +88,20 @@ class Shipper(BaseShipper):
         """
         assert(self._calculated)
         settings =  config_get_group('shipping.modules.ups')
+
+        if settings.HANDLING_FEE_PERCENT:
+            percent_fee =  int(str(settings.HANDLING_FEE_PERCENT))
+            if percent_fee > 0:
+                self.charges = (Decimal(self.charges) * (100 + percent_fee)) / 100
+
         if settings.HANDLING_FEE and Decimal(str(settings.HANDLING_FEE)) > Decimal(0):
             self.charges = Decimal(self.charges) + Decimal(str(settings.HANDLING_FEE))
 
-        return(Decimal(self.charges))
+        # Added free shipping min
+        if getattr(self, 'free_shipping', False):
+            self.charges = Decimal('0.0')
+
+        return Decimal(self.charges).quantize(Decimal('1.00'))
 
     def method(self):
         """
@@ -136,6 +146,12 @@ class Shipper(BaseShipper):
         from satchmo_store.shop.models import Config
 
         settings =  config_get_group('shipping.modules.ups')
+
+        if settings.FREE_SHIPPING_MIN:
+            free_min = Decimal(str(settings.FREE_SHIPPING_MIN))
+            if cart.undiscounted_total > free_min:
+                self.free_shipping = True
+
         self.delivery_days = _("3 - 4") #Default setting for ground delivery
         shop_details = Config.objects.get_current()
         # Get the code and description for the packaging

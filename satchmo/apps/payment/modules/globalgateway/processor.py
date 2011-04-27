@@ -192,8 +192,8 @@ class PaymentProcessor(BasePaymentProcessor):
                 reason_code = error.group("value")
                 if not success:
                     error_dict = self.process_error(reason_code)
-                    if error_dict['code'][:2] == "23":
-                        response_message = error_dict['message']
+                    #if error_dict['code'][:2] == "23":
+                    response_message = error_dict['message']
 
             if not testing:
                 payment = self.record_failure(amount = amount, transaction_id = transaction_id, reason_code = reason_code, details = response_message)
