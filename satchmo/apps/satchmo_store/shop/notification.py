@@ -10,7 +10,8 @@ log = logging.getLogger('contact.notifications')
 def order_success_listener(order=None, **kwargs):
     """Listen for order_success signal, and send confirmations"""
     if order:
-        send_order_confirmation(order)
+        if not getattr(order, "is_clerk_checkout", False):
+            send_order_confirmation(order)
         send_order_notice(order)
 
 def notify_on_ship_listener(sender, oldstatus="", newstatus="", order=None, **kwargs):
